@@ -1,0 +1,9 @@
+shi shino% %%
+
+shinio
+
+ent vMivariable90  <= guail
+5..456 + 25*30.5
+
+--un comentario--
+-- otro comentario mal -- hecho-

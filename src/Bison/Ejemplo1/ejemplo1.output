@@ -1,0 +1,166 @@
+Grammar
+
+    0 $accept: line $end
+
+    1 line: exp
+
+    2 exp: exp MAS term
+    3    | term
+
+    4 term: term MUL factor
+    5     | factor
+
+    6 factor: NUM
+    7       | LPAR exp RPAR
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+MAS (258) 2
+MUL (259) 4
+LPAR (260) 7
+RPAR (261) 7
+NUM (262) 6
+
+
+Nonterminals, with rules where they appear
+
+$accept (8)
+    on left: 0
+line (9)
+    on left: 1, on right: 0
+exp (10)
+    on left: 2 3, on right: 1 2 7
+term (11)
+    on left: 4 5, on right: 2 3 4
+factor (12)
+    on left: 6 7, on right: 4 5
+
+
+State 0
+
+    0 $accept: . line $end
+
+    LPAR  shift, and go to state 1
+    NUM   shift, and go to state 2
+
+    line    go to state 3
+    exp     go to state 4
+    term    go to state 5
+    factor  go to state 6
+
+
+State 1
+
+    7 factor: LPAR . exp RPAR
+
+    LPAR  shift, and go to state 1
+    NUM   shift, and go to state 2
+
+    exp     go to state 7
+    term    go to state 5
+    factor  go to state 6
+
+
+State 2
+
+    6 factor: NUM .
+
+    $default  reduce using rule 6 (factor)
+
+
+State 3
+
+    0 $accept: line . $end
+
+    $end  shift, and go to state 8
+
+
+State 4
+
+    1 line: exp .
+    2 exp: exp . MAS term
+
+    MAS  shift, and go to state 9
+
+    $default  reduce using rule 1 (line)
+
+
+State 5
+
+    3 exp: term .
+    4 term: term . MUL factor
+
+    MUL  shift, and go to state 10
+
+    $default  reduce using rule 3 (exp)
+
+
+State 6
+
+    5 term: factor .
+
+    $default  reduce using rule 5 (term)
+
+
+State 7
+
+    2 exp: exp . MAS term
+    7 factor: LPAR exp . RPAR
+
+    MAS   shift, and go to state 9
+    RPAR  shift, and go to state 11
+
+
+State 8
+
+    0 $accept: line $end .
+
+    $default  accept
+
+
+State 9
+
+    2 exp: exp MAS . term
+
+    LPAR  shift, and go to state 1
+    NUM   shift, and go to state 2
+
+    term    go to state 12
+    factor  go to state 6
+
+
+State 10
+
+    4 term: term MUL . factor
+
+    LPAR  shift, and go to state 1
+    NUM   shift, and go to state 2
+
+    factor  go to state 13
+
+
+State 11
+
+    7 factor: LPAR exp RPAR .
+
+    $default  reduce using rule 7 (factor)
+
+
+State 12
+
+    2 exp: exp MAS term .
+    4 term: term . MUL factor
+
+    MUL  shift, and go to state 10
+
+    $default  reduce using rule 2 (exp)
+
+
+State 13
+
+    4 term: term MUL factor .
+
+    $default  reduce using rule 4 (term)

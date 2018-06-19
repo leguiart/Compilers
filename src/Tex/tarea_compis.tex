@@ -1,0 +1,149 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{amsmath}
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+%\usepackage{sectsty}
+%\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{Compiladores: Tarea 5}
+\author{Eguiarte Morett Luis Andres}
+\date{Octubre 5, 2017} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\maketitle
+
+\section{Tabla de análisis sintáctico LL(1)}
+
+Obtener las tablas de análisis sintáctico LL(1) para las siguientes gramáticas.
+
+\subsection{$S\rightarrow*SS\vert+SS\vert a$}
+
+La gramática ya es no ambigua y libre de recursividad por la izquierda, proseguimos a sacar First() y Follow().
+\\
+
+First(S) = \{* + a \} \\
+Follow(S) = \{ \$ \} \\
+
+La tabla LL(1) queda: \\
+
+\begin{tabular}{l*{6}{c}r}
+              & * & + & a & \$ \\
+\hline
+S & 1 & 2 & 3 &     \\
+\end{tabular}
+
+\subsection{$S\rightarrow SS*\vert SS+\vert a$}
+
+Factorizando por la izquierda: \\
+$S \rightarrow SSS' \vert a$ \\
+$S' \rightarrow * \vert + $ \\
+\\
+Eliminando recursividad por la izquierda: \\
+$S \rightarrow aS''$ \\
+$S'' \rightarrow SS'S'' \vert \varepsilon$ \\
+$S' \rightarrow * \vert +$
+\\
+
+First(S) = \{ a \} \\
+First(S'') = \{ a $\varepsilon$ \} \\
+First(S') =  \{ * + \} \\
+\\
+Follow(S) = \{ \$ * + \}\\
+Follow(S'') = \{ \$ * + \}\\
+Follow(S') = \{ a \$ * + \}\\
+\\
+La tabla de análisis sintáctico queda: \\
+\begin{tabular}{l*{6}{c}r}
+                  & a & * & + & \$ \\
+\hline
+S & 1 &   &   &   \\
+S'' & 2 & 3 & 3 & 3 \\
+S'  &   & 4 & 5 &   \\
+\end{tabular}
+
+\subsection{$S\rightarrow S+S\vert SS\vert S* \vert (S) \vert a$}
+Eliminando ambiguedad de la gramática: \\
++ --- $E \rightarrow E + T \vert T$ \\
+conc * --- $T \rightarrow T* \vert TT \vert F$ \\
+() --- $F \rightarrow (E) \vert a$ \\
+\\
+Eliminando recursividad por la izquierda: \\
+$E \rightarrow TE'$ \\
+$E' \rightarrow +TE' \vert \varepsilon $ \\
+$T \rightarrow FT'$ \\
+$T' \rightarrow TT' \vert *T' \vert \varepsilon$ \\
+$F \rightarrow (E) \vert a $ \\
+\\
+
+First(E) = First(T) = First(F) = \{ ( a \} \\
+First(E') = \{ + $\varepsilon$ \} \\
+First(T') = \{ ( a $\varepsilon$ \} \\
+\\
+Follow(E) = \{ \$ ) \} \\
+Follow(E') = \{ \$ ) \} \\
+Follow(T) = \{ + \$ ) \} \\
+Follow(T') = \{ + \$ \} \\
+Follow(F) = \{ ( a * + \$ ) \}\\
+\\
+La tabla de análisis sintáctico queda: \\
+\begin{tabular}{l*{6}{c}r}
+                  & + & * & ( & ) & a & \$ \\
+\hline
+E &   &   & 1 &   & 1 &   \\
+E' & 2 &   &   & 3 &   & 3 \\
+T &   &   & 4 &   & 4 &   \\
+T'  & 7 & 6 & 5 & 7 & 5 & 7 \\
+F  &   &   & 8 &   & 9 &   \\
+\end{tabular}
+
+\end{document}
